@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:note_app/screens/home_page.dart';
 
@@ -19,10 +20,13 @@ class _AddCategoryState extends State<AddCategory> {
   Future<void> addCategory() {
     // Call the user's CollectionReference to add a new user
     if (formKey.currentState!.validate()) {
-      return categories.add({'name': name.text}).then((value) {
+      return categories.add({
+        'name': name.text,
+        'id': FirebaseAuth.instance.currentUser!.uid
+      }).then((value) {
         print("Category Added");
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => const HomePage()),
             (route) => false);
       }).catchError((error) => print("Failed to add category: $error"));
     } else {

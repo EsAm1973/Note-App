@@ -16,10 +16,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<QueryDocumentSnapshot> date = [];
   bool isLooging = true;
-  //Function to get data from firebase
+  //Function to get data from firebase for a user logedin
   getDate() async {
     FirebaseFirestore.instance
         .collection('categories')
+        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
