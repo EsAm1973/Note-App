@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -79,19 +80,41 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
               itemCount: date.length,
               itemBuilder: (context, index) {
-                return Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Card(
-                    elevation: 5,
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'images/folder.png',
-                          height: 120,
-                        ),
-                        //We reach to data with key name (keys in map)
-                        Text(date[index]['name'])
-                      ],
+                return InkWell(
+                  onLongPress: () {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.warning,
+                      animType: AnimType.rightSlide,
+                      title: 'Delete Category',
+                      desc: 'Are you sure you want to delete it?',
+                      btnCancelOnPress: () {},
+
+                      //This is Function to delete spacific doc from firebase
+                      btnOkOnPress: () async {
+                        await FirebaseFirestore.instance
+                            .collection('categories')
+                            .doc(date[index].id)
+                            .delete();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const HomePage()));
+                      },
+                    ).show();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Card(
+                      elevation: 5,
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'images/folder.png',
+                            height: 120,
+                          ),
+                          //We reach to data with key name (keys in map)
+                          Text(date[index]['name'])
+                        ],
+                      ),
                     ),
                   ),
                 );
